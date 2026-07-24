@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Знахарница — бръмбарът знахар, отгледан с грижа</title>
+<meta name="description" content="Знахарница отглежда колонии от бръмбара знахар по стария начин. Жива доставка с куриер, сигурно плащане с карта през Stripe и SumUp.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400..800;1,400&family=Sofia+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============ Токени ============ */
+:root{
+  --ground:#F6F1E4;        /* ленено платно */
+  --ground-2:#EFE7D2;      /* по-плътен лен за редуващи се секции */
+  --card:#FDFAF1;
+  --ink:#2A241A;           /* тъмна кора */
+  --ink-soft:#6E6450;
+  --herb:#2F5240;          /* горска билка */
+  --herb-deep:#24402F;
+  --honey:#C4841D;         /* липов мед — действия и акценти */
+  --honey-ink:#8F5D0F;
+  --stitch:#A63D2A;        /* шипка — само за бодовете на шевицата */
+  --line:#DDD2B6;
+  --shadow:0 10px 30px rgba(42,36,26,.08);
+  --r-card:14px;
+  --r-btn:8px;
+
+  --font-display:"Alegreya",Georgia,"Times New Roman",serif;
+  --font-body:"Sofia Sans","Segoe UI",system-ui,-apple-system,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --ground:#161D18;
+    --ground-2:#121813;
+    --card:#1E2820;
+    --ink:#EFE7D3;
+    --ink-soft:#A9A18B;
+    --herb:#83B697;
+    --herb-deep:#9CC7AC;
+    --honey:#E0A33E;
+    --honey-ink:#EDBE6C;
+    --stitch:#D06A50;
+    --line:#2E3A30;
+    --shadow:0 10px 30px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="light"]{
+  --ground:#F6F1E4; --ground-2:#EFE7D2; --card:#FDFAF1;
+  --ink:#2A241A; --ink-soft:#6E6450;
+  --herb:#2F5240; --herb-deep:#24402F;
+  --honey:#C4841D; --honey-ink:#8F5D0F;
+  --stitch:#A63D2A; --line:#DDD2B6;
+  --shadow:0 10px 30px rgba(42,36,26,.08);
+}
+:root[data-theme="dark"]{
+  --ground:#161D18; --ground-2:#121813; --card:#1E2820;
+  --ink:#EFE7D3; --ink-soft:#A9A18B;
+  --herb:#83B697; --herb-deep:#9CC7AC;
+  --honey:#E0A33E; --honey-ink:#EDBE6C;
+  --stitch:#D06A50; --line:#2E3A30;
+  --shadow:0 10px 30px rgba(0,0,0,.35);
+}
+
+/* ============ Основи ============ */
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--ground);
+  color:var(--ink);
+  font-family:var(--font-body);
+  font-size:17px;
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{font-family:var(--font-display);font-weight:700;line-height:1.15;text-wrap:balance}
+p{max-width:62ch}
+a{color:var(--herb)}
+img{max-width:100%}
+section{scroll-margin-top:84px}
+.container{max-width:1100px;margin:0 auto;padding:0 24px}
+
+.eyebrow{
+  font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--honey-ink);display:flex;align-items:center;gap:10px;
+}
+.eyebrow::before{content:"";width:9px;height:9px;background:var(--stitch);transform:rotate(45deg);flex:none}
+
+.section-head{display:flex;flex-direction:column;gap:12px;margin-bottom:40px}
+.section-head h2{font-size:clamp(28px,4vw,40px)}
+.section-head .lead{color:var(--ink-soft);font-size:19px}
+
+/* ============ Навигация ============ */
+header{
+  position:sticky;top:0;z-index:50;
+  background:color-mix(in srgb,var(--ground) 88%,transparent);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+}
+.nav{display:flex;align-items:center;gap:28px;height:64px}
+.brand{font-family:var(--font-display);font-size:24px;font-weight:800;color:var(--ink);text-decoration:none;display:flex;align-items:center;gap:10px}
+.brand .mark{width:12px;height:12px;background:var(--herb);transform:rotate(45deg);flex:none;box-shadow:4px 4px 0 0 var(--honey)}
+.nav-links{display:flex;gap:22px;margin-left:auto;align-items:center}
+.nav-links a{color:var(--ink);text-decoration:none;font-weight:600;font-size:15px}
+.nav-links a:hover{color:var(--herb)}
+.theme-toggle{
+  border:1px solid var(--line);background:var(--card);color:var(--ink);
+  width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:15px;line-height:1;
+}
+@media (max-width:720px){.nav-links a:not(.btn){display:none}}
+
+/* ============ Бутони ============ */
+.btn{
+  display:inline-flex;align-items:center;gap:8px;justify-content:center;
+  font-family:var(--font-body);font-weight:700;font-size:16px;
+  padding:12px 22px;border-radius:var(--r-btn);cursor:pointer;text-decoration:none;
+  border:2px solid transparent;transition:transform .12s ease,box-shadow .12s ease;
+}
+.btn:active{transform:translateY(1px)}
+.btn-honey{background:var(--honey);color:#241B08;border-color:var(--honey)}
+.btn-honey:hover{box-shadow:0 6px 16px color-mix(in srgb,var(--honey) 40%,transparent)}
+.btn-ghost{background:transparent;color:var(--herb);border-color:var(--herb)}
+.btn-ghost:hover{background:color-mix(in srgb,var(--herb) 10%,transparent)}
+:where(a,button,summary,input,select):focus-visible{outline:3px solid var(--honey);outline-offset:2px;border-radius:4px}
+
+/* ============ Херо ============ */
+.hero{padding:72px 0 64px}
+.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:56px;align-items:center}
+@media (max-width:860px){.hero-grid{grid-template-columns:1fr}}
+.hero h1{font-size:clamp(36px,5.5vw,58px);margin:18px 0 20px}
+.hero h1 em{font-style:italic;color:var(--herb)}
+.hero .sub{font-size:19px;color:var(--ink-soft);margin-bottom:30px}
+.hero-actions{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:34px}
+.trust{display:flex;gap:10px;flex-wrap:wrap}
+.chip{
+  font-size:14px;font-weight:600;color:var(--ink);
+  background:var(--card);border:1px solid var(--line);
+  padding:7px 14px;border-radius:999px;display:inline-flex;align-items:center;gap:7px;
+}
+.chip b{color:var(--herb)}
+
+/* Шевица-бръмбар */
+.stitch-panel{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--r-card);
+  box-shadow:var(--shadow);padding:34px 30px 24px;display:flex;flex-direction:column;align-items:center;gap:18px;
+}
+.stitch-grid{display:grid;gap:3px}
+.stitch-grid i{
+  width:var(--cell,16px);height:var(--cell,16px);border-radius:2px;display:block;
+  opacity:0;transform:scale(.4);
+  transition:opacity .35s ease,transform .35s ease;
+  transition-delay:var(--d,0s);
+}
+.stitch-grid.sewn i{opacity:1;transform:scale(1)}
+.stitch-grid i.g{background:var(--herb)}
+.stitch-grid i.h{background:var(--honey)}
+.stitch-grid i.r{background:var(--stitch)}
+.stitch-caption{font-size:13.5px;color:var(--ink-soft);text-align:center;font-style:italic;font-family:var(--font-display)}
+@media (max-width:400px){.stitch-grid{--cell:12px}}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .stitch-grid i{transition:none;opacity:1;transform:none}
+  .reveal{transition:none !important;opacity:1 !important;transform:none !important}
+}
+
+/* ============ Секции ============ */
+.band{padding:84px 0}
+.band-alt{background:var(--ground-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+
+/* ---- Купи ---- */
+.packs{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-bottom:56px}
+@media (max-width:860px){.packs{grid-template-columns:1fr}}
+.pack{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--r-card);
+  padding:30px 26px;display:flex;flex-direction:column;gap:14px;position:relative;
+}
+.pack.featured{border-color:var(--honey);box-shadow:var(--shadow)}
+.pack .flag{
+  position:absolute;top:-13px;left:26px;background:var(--honey);color:#241B08;
+  font-size:12.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
+  padding:4px 12px;border-radius:999px;
+}
+.pack h3{font-size:24px}
+.pack .qty{color:var(--herb);font-weight:700;font-size:14.5px;letter-spacing:.04em;text-transform:uppercase}
+.pack ul{list-style:none;display:flex;flex-direction:column;gap:9px;color:var(--ink-soft);font-size:15.5px;flex-grow:1}
+.pack ul li{padding-left:22px;position:relative}
+.pack ul li::before{content:"";position:absolute;left:4px;top:9px;width:7px;height:7px;background:var(--herb);transform:rotate(45deg)}
+.price{font-family:var(--font-display);font-size:34px;font-weight:800;font-variant-numeric:tabular-nums}
+.price small{font-family:var(--font-body);font-size:14.5px;color:var(--ink-soft);font-weight:500;display:block;margin-top:2px}
+.pack .btn{width:100%}
+
+/* поръчка */
+.order-grid{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:start}
+@media (max-width:860px){.order-grid{grid-template-columns:1fr}}
+.steps{display:flex;flex-direction:column;gap:0;counter-reset:step}
+.step{display:grid;grid-template-columns:44px 1fr;gap:16px;padding:18px 0;border-bottom:1px dashed var(--line)}
+.step:last-child{border-bottom:none}
+.step::before{
+  counter-increment:step;content:counter(step);
+  width:40px;height:40px;border-radius:50%;
+  background:var(--herb);color:var(--ground);
+  font-weight:800;font-size:18px;display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-display);
+}
+.step h4{font-size:17px;margin-bottom:4px}
+.step p{font-size:15px;color:var(--ink-soft)}
+.pay-badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.pay-badges span{
+  font-size:12.5px;font-weight:800;letter-spacing:.06em;
+  border:1.5px solid var(--line);border-radius:6px;padding:4px 10px;color:var(--ink-soft);
+}
+.guarantee{
+  margin-top:22px;background:color-mix(in srgb,var(--herb) 10%,transparent);
+  border:1px solid color-mix(in srgb,var(--herb) 35%,transparent);
+  border-radius:12px;padding:16px 18px;font-size:15.5px;
+}
+.guarantee b{color:var(--herb-deep)}
+
+.order-form{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--r-card);
+  box-shadow:var(--shadow);padding:30px 28px;
+}
+.order-form h3{font-size:22px;margin-bottom:6px}
+.order-form .hint{font-size:14px;color:var(--ink-soft);margin-bottom:20px}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.field label{font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft)}
+.field input,.field select{
+  font-family:var(--font-body);font-size:16px;color:var(--ink);
+  background:var(--ground);border:1px solid var(--line);border-radius:8px;padding:11px 14px;
+}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:480px){.field-row{grid-template-columns:1fr}}
+.order-note{font-size:13px;color:var(--ink-soft);margin-top:12px}
+
+/* заявка в таблото */
+.ticket{
+  margin-top:22px;border:1.5px dashed var(--herb);border-radius:12px;padding:20px 22px;
+  background:color-mix(in srgb,var(--herb) 6%,transparent);display:none;
+}
+.ticket.show{display:block}
+.ticket .t-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:10px}
+.ticket .t-num{font-family:var(--font-display);font-weight:800;font-size:20px}
+.ticket .t-status{font-size:12.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--herb-deep);background:color-mix(in srgb,var(--herb) 18%,transparent);padding:3px 10px;border-radius:999px}
+.ticket dl{display:grid;grid-template-columns:auto 1fr;gap:4px 16px;font-size:15px}
+.ticket dt{color:var(--ink-soft)}
+.ticket dd{font-weight:600}
+.ticket .t-foot{font-size:13px;color:var(--ink-soft);margin-top:12px}
+
+/* ---- Научи ---- */
+.learn-grid{display:grid;grid-template-columns:1fr 1fr;gap:44px;margin-bottom:52px}
+@media (max-width:860px){.learn-grid{grid-template-columns:1fr}}
+.learn-card h3{font-size:23px;margin-bottom:12px}
+.learn-card p{color:var(--ink-soft);font-size:16.5px}
+.learn-card p + p{margin-top:12px}
+.learn-card .latin{font-style:italic;font-family:var(--font-display)}
+
+.ladder{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--r-card);
+  padding:30px 28px 22px;box-shadow:var(--shadow);
+}
+.ladder h3{font-size:20px;margin-bottom:18px}
+.ladder-bars{display:flex;align-items:flex-end;gap:4px;height:120px;margin-bottom:12px}
+.ladder-bars i{flex:1;background:var(--herb);border-radius:2px 2px 0 0;min-width:3px;display:block}
+.ladder-bars i.peak{background:var(--honey)}
+.ladder-labels{display:flex;justify-content:space-between;font-size:12.5px;color:var(--ink-soft);letter-spacing:.04em}
+.ladder .ladder-note{font-size:14px;color:var(--ink-soft);margin-top:14px;font-style:italic;font-family:var(--font-display)}
+
+.honesty{
+  background:var(--card);border-left:5px solid var(--honey);border-radius:0 var(--r-card) var(--r-card) 0;
+  padding:26px 30px;box-shadow:var(--shadow);
+}
+.honesty h3{font-size:21px;margin-bottom:10px}
+.honesty p{color:var(--ink-soft);font-size:16px;max-width:75ch}
+
+/* ---- Отзиви ---- */
+.letters{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+@media (max-width:860px){.letters{grid-template-columns:1fr}}
+.letter{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--r-card);
+  padding:30px 28px;display:flex;flex-direction:column;gap:16px;
+}
+.letter blockquote{
+  font-family:var(--font-display);font-style:italic;font-size:18.5px;line-height:1.55;flex-grow:1;
+}
+.letter blockquote::before{content:"„"}
+.letter blockquote::after{content:"“"}
+.letter .who{display:flex;align-items:center;gap:12px}
+.letter .who .init{
+  width:42px;height:42px;border-radius:50%;background:var(--herb);color:var(--ground);
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-family:var(--font-display);font-size:18px;flex:none;
+}
+.letter .who b{display:block;font-size:15.5px}
+.letter .who span{font-size:13.5px;color:var(--ink-soft)}
+.letters-note{margin-top:26px;font-size:14px;color:var(--ink-soft);font-style:italic}
+
+/* ---- Въпроси ---- */
+.faq{max-width:760px}
+.faq details{border-bottom:1px solid var(--line)}
+.faq summary{
+  cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:16px;
+  padding:20px 4px;font-weight:700;font-size:17.5px;
+}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{
+  content:"+";font-family:var(--font-display);font-size:24px;color:var(--honey-ink);flex:none;
+  transition:transform .2s ease;
+}
+.faq details[open] summary::after{transform:rotate(45deg)}
+.faq details p{padding:0 4px 22px;color:var(--ink-soft);font-size:16px;max-width:68ch}
+
+/* ---- Честна бележка / футър ---- */
+.disclaimer{
+  background:var(--herb);color:var(--ground);padding:44px 0;
+}
+:root[data-theme="dark"] .disclaimer,
+[data-dark-scope] .disclaimer{color:var(--ground)}
+.disclaimer .inner{display:flex;gap:20px;align-items:flex-start}
+.disclaimer .mark{width:12px;height:12px;background:var(--honey);transform:rotate(45deg);flex:none;margin-top:9px}
+.disclaimer p{font-size:16px;line-height:1.7;max-width:78ch;color:color-mix(in srgb,var(--ground) 92%,var(--herb))}
+.disclaimer b{color:var(--ground)}
+
+footer{padding:44px 0 56px;border-top:1px solid var(--line)}
+.foot{display:flex;flex-wrap:wrap;gap:28px;justify-content:space-between;align-items:flex-start}
+.foot .brand{font-size:21px}
+.foot-col{font-size:15px;color:var(--ink-soft);line-height:1.9}
+.foot-col b{color:var(--ink);display:block;font-size:13px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px}
+.smallprint{margin-top:30px;font-size:13px;color:var(--ink-soft)}
+
+/* ---- Появяване при скрол ---- */
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease}
+.reveal.in{opacity:1;transform:none}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container nav">
+    <a class="brand" href="#"><span class="mark" aria-hidden="true"></span>Знахарница</a>
+    <nav class="nav-links" aria-label="Основна навигация">
+      <a href="#kupi">Купи</a>
+      <a href="#nauchi">Научи</a>
+      <a href="#otzivi">Отзиви</a>
+      <a href="#vaprosi">Въпроси</a>
+      <button class="theme-toggle" id="themeToggle" aria-label="Смени светла/тъмна тема">☾</button>
+      <a class="btn btn-honey" href="#kupi" style="padding:9px 18px;font-size:15px">Изберете колония</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- ============ ХЕРО ============ -->
+<section class="hero">
+  <div class="container hero-grid">
+    <div>
+      <p class="eyebrow">Народно лечителство · ново измерение</p>
+      <h1>Бръмбарът знахар. <em>Жива традиция</em>, отгледана с грижа.</h1>
+      <p class="sub">В Знахарница отглеждаме колонии от бръмбара знахар по стария начин — търпеливо, чисто и с уважение към традицията. Изпращаме ги живи и бодри до вашата врата, с всичко нужно, за да продължи пътят им у дома.</p>
+      <div class="hero-actions">
+        <a class="btn btn-honey" href="#kupi">Изберете колония</a>
+        <a class="btn btn-ghost" href="#nauchi">Научете повече</a>
+      </div>
+      <div class="trust">
+        <span class="chip"><b>✓</b> Жива доставка с куриер до 2 дни</span>
+        <span class="chip"><b>✓</b> Плащане с карта — Stripe и SumUp</span>
+        <span class="chip"><b>✓</b> Отглеждани в България</span>
+      </div>
+    </div>
+    <div class="stitch-panel reveal">
+      <div class="stitch-grid" id="stitchGrid" role="img" aria-label="Бръмбар знахар, изобразен като българска шевица"></div>
+      <p class="stitch-caption">Знахарят, избродиран както баба би го извезала —<br>бод по бод, с търпение.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ КУПИ ============ -->
+<section class="band band-alt" id="kupi">
+  <div class="container">
+    <div class="section-head reveal">
+      <p class="eyebrow">Купи</p>
+      <h2>Изберете своята колония</h2>
+      <p class="lead">Три начина да започнете — от първа среща с традицията до жива аптека за цялото семейство. Цените са в евро, с равностойност в лева.</p>
+    </div>
+
+    <div class="packs">
+      <article class="pack reveal">
+        <h3>Първа стъпка</h3>
+        <p class="qty">≈ 60 бръмбара</p>
+        <ul>
+          <li>Стартова колония във вентилиран съд</li>
+          <li>Храна за първите две седмици</li>
+          <li>Книжка с традиционната схема и грижата</li>
+        </ul>
+        <p class="price">€19,90 <small>38,92 лв. · с включена книжка</small></p>
+        <button class="btn btn-ghost" data-pack="Първа стъпка|19.90">Поръчай</button>
+      </article>
+
+      <article class="pack featured reveal">
+        <span class="flag">Най-избирана</span>
+        <h3>Пълен цикъл</h3>
+        <p class="qty">≈ 220 бръмбара</p>
+        <ul>
+          <li>Достатъчно за цялата възходяща и низходяща стълбица</li>
+          <li>Храна за месец напред</li>
+          <li>Книжка + картонче за отбелязване на дните</li>
+          <li>Приоритетно опаковане и изпращане</li>
+        </ul>
+        <p class="price">€44,90 <small>87,82 лв. · безплатна доставка</small></p>
+        <button class="btn btn-honey" data-pack="Пълен цикъл|44.90">Поръчай</button>
+      </article>
+
+      <article class="pack reveal">
+        <h3>Жива аптека</h3>
+        <p class="qty">≈ 300 бръмбара + дом за тях</p>
+        <ul>
+          <li>Колония за дългосрочно отглеждане</li>
+          <li>Буркан с вентилиран капак и храна</li>
+          <li>Наръчник за грижа и множене</li>
+          <li>30 минути разговор с нашия билкар по телефона</li>
+        </ul>
+        <p class="price">€64,90 <small>126,93 лв. · безплатна доставка</small></p>
+        <button class="btn btn-ghost" data-pack="Жива аптека|64.90">Поръчай</button>
+      </article>
+    </div>
+
+    <div class="order-grid">
+      <div class="reveal">
+        <h3 style="font-size:24px;margin-bottom:8px">Как протича поръчката</h3>
+        <p style="color:var(--ink-soft);font-size:16px;margin-bottom:10px">От клика до вашата врата — четири прости стъпки, зад които стои подредена система.</p>
+        <div class="steps">
+          <div class="step">
+            <div><h4>Избирате колония</h4><p>Посочвате пакет, град и удобен куриерски офис или адрес.</p></div>
+          </div>
+          <div class="step">
+            <div>
+              <h4>Плащате сигурно с карта</h4>
+              <p>Плащането минава през сертифициран терминал на Stripe или SumUp. Ние не виждаме и не пазим данните от картата ви.</p>
+              <div class="pay-badges"><span>STRIPE</span><span>SUMUP</span><span>VISA</span><span>MASTERCARD</span><span>3-D SECURE</span></div>
+            </div>
+          </div>
+          <div class="step">
+            <div><h4>Заявката влиза в таблото ни</h4><p>Всяка поръчка се превръща в подредена заявка: етикет за куриера, дажба храна за из път и инструкции в кутията. Нищо не се губи и не се бави.</p></div>
+          </div>
+          <div class="step">
+            <div><h4>Куриерът я носи до вас</h4><p>Еконт или Спиди, до офис или до адрес, обикновено за 1–2 работни дни. Пращаме ви номер за проследяване.</p></div>
+          </div>
+        </div>
+        <p class="guarantee"><b>Нашата гаранция:</b> бръмбарите пристигат живи и бодри. Ако нещо се обърка по пътя — изпращаме нова колония, безплатно и без въпроси.</p>
+      </div>
+
+      <form class="order-form reveal" id="orderForm" novalidate>
+        <h3>Поръчка</h3>
+        <p class="hint">Попълнете данните — отнема под минута. Полетата се използват само за изпълнение на доставката.</p>
+        <div class="field">
+          <label for="fPack">Пакет</label>
+          <select id="fPack" required>
+            <option value="Първа стъпка|19.90">Първа стъпка — €19,90</option>
+            <option value="Пълен цикъл|44.90" selected>Пълен цикъл — €44,90</option>
+            <option value="Жива аптека|64.90">Жива аптека — €64,90</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="fName">Име и фамилия</label>
+          <input id="fName" type="text" autocomplete="name" placeholder="Мария Иванова" required>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="fPhone">Телефон</label>
+            <input id="fPhone" type="tel" autocomplete="tel" placeholder="0888 000 000" required>
+          </div>
+          <div class="field">
+            <label for="fCity">Град / село</label>
+            <input id="fCity" type="text" autocomplete="address-level2" placeholder="Габрово" required>
+          </div>
+        </div>
+        <div class="field">
+          <label for="fCourier">Доставка</label>
+          <select id="fCourier" required>
+            <option>Еконт — до офис</option>
+            <option>Спиди — до офис</option>
+            <option>Куриер — до адрес</option>
+          </select>
+        </div>
+        <button class="btn btn-honey" type="submit" style="width:100%">Продължи към плащане с карта</button>
+        <p class="order-note">Натискайки бутона, ще бъдете отведени към защитената страница за плащане. Никакви данни от картата не минават през нашия сайт.</p>
+
+        <div class="ticket" id="ticket" aria-live="polite">
+          <div class="t-head">
+            <span class="t-num" id="tNum">Заявка №1042</span>
+            <span class="t-status">Готова за куриер</span>
+          </div>
+          <dl>
+            <dt>Пакет</dt><dd id="tPack">—</dd>
+            <dt>Клиент</dt><dd id="tClient">—</dd>
+            <dt>Доставка</dt><dd id="tCourier">—</dd>
+            <dt>Сума</dt><dd id="tSum">—</dd>
+          </dl>
+          <p class="t-foot">Така изглежда заявката в нашето табло за изпълнение — подредена и готова за опаковане. (Демонстрация — плащането се включва при свързване на Stripe/SumUp.)</p>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ============ НАУЧИ ============ -->
+<section class="band" id="nauchi">
+  <div class="container">
+    <div class="section-head reveal">
+      <p class="eyebrow">Научи</p>
+      <h2>Кой е знахарят?</h2>
+      <p class="lead">Малък бръмбар с дълга история — и с още по-дълъг път от Южна Америка до бабините буркани.</p>
+    </div>
+
+    <div class="learn-grid">
+      <div class="learn-card reveal">
+        <h3>Историята</h3>
+        <p>Бръмбарът знахар <span class="latin">(Ulomoides dermestoides)</span> е дребно, тъмнокестеняво бръмбарче — не по-голямо от оризово зърно. Родом е от Азия, но славата му тръгва от Аржентина, където преди десетилетия хората започват да го отглеждат по домовете си и да си го предават от ръка на ръка — със схема, разказ и много вяра.</p>
+        <p>Оттам традицията стига и до нашите ширини. Днес колонии се гледат тихо и грижовно в много български домове — в буркан на топло, върху шепа овесени ядки.</p>
+        <h3 style="margin-top:26px">Грижата у дома</h3>
+        <p>Знахарят е непретенциозен съсед: буркан с вентилиран капак, овесени ядки или малко хляб, тъмно и топло място. Колонията се множи сама и при добра грижа ви съпровожда през цялата схема — и след нея.</p>
+      </div>
+
+      <div class="reveal">
+        <div class="ladder">
+          <h3>Традиционната стълбица</h3>
+          <div class="ladder-bars" id="ladderBars" role="img" aria-label="Схема на традиционния прием: броят се увеличава с по един на ден до върха, после намалява обратно до един"></div>
+          <div class="ladder-labels"><span>ден 1 — един бръмбар</span><span>върхът</span><span>обратно към един</span></div>
+          <p class="ladder-note">По традиция се започва с един бръмбар на ден. Всеки ден се добавя още един, докато се стигне върхът на стълбицата — после броят намалява по същия път обратно. Цялата схема, ден по ден, е описана в книжката към всяка колония.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="honesty reveal">
+      <h3>Нашето обещание за честност</h3>
+      <p>Обичаме тази традиция и вярваме в силата на грижата за себе си. Но ви дължим и истината: бръмбарът знахар е част от народната практика, а не лекарство, и науката все още няма доказателства за лечебното му действие. Ако се лекувате от сериозно заболяване — продължете лечението, което ви е предписал вашият лекар, и споделете с него какво още приемате. Народното и модерното не се изключват; те вървят най-добре ръка за ръка.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ОТЗИВИ ============ -->
+<section class="band band-alt" id="otzivi">
+  <div class="container">
+    <div class="section-head reveal">
+      <p class="eyebrow">Отзиви</p>
+      <h2>Писма от нашите хора</h2>
+      <p class="lead">Истински думи от хора, които гледат своите колонии. Споделени с разрешение.</p>
+    </div>
+
+    <div class="letters">
+      <article class="letter reveal">
+        <blockquote>Взимам ги трети месец по схемата. Чудеса не мога да обещая никому, но сутрин ставам по-лека и по-засмяна. А колонията си я гледам като домашни любимци — свикнах с тях.</blockquote>
+        <div class="who">
+          <span class="init" aria-hidden="true">В</span>
+          <div><b>Величка, 68 г.</b><span>гр. Пазарджик · пакет „Пълен цикъл“</span></div>
+        </div>
+      </article>
+      <article class="letter reveal">
+        <blockquote>Поръчах в неделя, в сряда бяха при мен — живи и пъргави, с храна и книжка в кутията. После се обадиха да питат как се справям. Такова отношение не бях виждал от магазин.</blockquote>
+        <div class="who">
+          <span class="init" aria-hidden="true">С</span>
+          <div><b>Стоян, 55 г.</b><span>гр. Габрово · пакет „Жива аптека“</span></div>
+        </div>
+      </article>
+      <article class="letter reveal">
+        <blockquote>Търсех натурален начин да се погрижа за себе си. Книжката е написана човешки, схемата се следва лесно. Чувствам се по-свежа — а може и просто да съм по-спокойна. И двете ми стигат.</blockquote>
+        <div class="who">
+          <span class="init" aria-hidden="true">М</span>
+          <div><b>Мария, 46 г.</b><span>гр. Варна · пакет „Първа стъпка“</span></div>
+        </div>
+      </article>
+    </div>
+
+    <p class="letters-note">Личните разкази са лични усещания, не медицинско доказателство. Точно затова са ценни — истински са.</p>
+  </div>
+</section>
+
+<!-- ============ ВЪПРОСИ ============ -->
+<section class="band" id="vaprosi">
+  <div class="container">
+    <div class="section-head reveal">
+      <p class="eyebrow">Въпроси</p>
+      <h2>Питате — отговаряме</h2>
+      <p class="lead">Най-честите въпроси, събрани от телефона и от кутията ни с писма.</p>
+    </div>
+
+    <div class="faq reveal">
+      <details>
+        <summary>Живи ли пристигат бръмбарите?</summary>
+        <p>Да — пътуват във вентилиран съд, с храна за из път и защита от студ и жега. Изпращаме само в началото на седмицата, за да не престояват в склад през уикенда. Ако въпреки всичко нещо се обърка, изпращаме нова колония безплатно.</p>
+      </details>
+      <details>
+        <summary>Как се приемат по традиция?</summary>
+        <p>Традиционната схема е „стълбица“: започва се с един бръмбар на ден и всеки ден се добавя още един до върха, после броят намалява обратно. Пълното описание, ден по ден, е в книжката към всяка колония. Приемат се най-често с малко кисело мляко или мед.</p>
+      </details>
+      <details>
+        <summary>Безопасно ли е?</summary>
+        <p>Колониите ни се отглеждат на чиста храна, без препарати, и всяка партида се преглежда преди път. Все пак — при алергия към насекоми или черупчести, при бременност или при прием на лекарства се посъветвайте с лекар, преди да започнете. Честно е да го кажем.</p>
+      </details>
+      <details>
+        <summary>Замества ли това лечението при лекар?</summary>
+        <p>Не. Бръмбарът знахар е народна традиция, не лекарство. Никога не спирайте и не отлагайте предписано лечение заради него. Ако се лекувате — кажете на лекаря си какво приемате допълнително. Ние подкрепяме, не заместваме.</p>
+      </details>
+      <details>
+        <summary>Как мога да платя?</summary>
+        <p>С дебитна или кредитна карта — плащането минава през защитен терминал на Stripe или SumUp с 3-D Secure. Данните от картата ви не минават през нашия сайт и не се съхраняват при нас. При желание приемаме и наложен платеж при доставка.</p>
+      </details>
+      <details>
+        <summary>Как да отглеждам колонията у дома?</summary>
+        <p>Буркан или кутия с вентилиран капак, шепа овесени ядки (може и малко хляб или фъстъци), тъмно и топло място — далеч от пряко слънце. Колонията се множи сама; на всеки няколко седмици добавяте прясна храна. Пълният наръчник идва в кутията.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ ЧЕСТНА БЕЛЕЖКА ============ -->
+<div class="disclaimer">
+  <div class="container inner">
+    <span class="mark" aria-hidden="true"></span>
+    <p><b>Говорим си честно.</b> Знахарница предлага бръмбара знахар като част от народната традиция и грижата за себе си. Той не е лекарство, не диагностицира, не лекува и не предпазва от заболявания. Информацията на този сайт не е медицински съвет и не замества преглед, диагноза или лечение при квалифициран лекар. Ако имате здравословен проблем — първата ви крачка е лекарският кабинет; ние ще сме тук и след това.</p>
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <div class="foot">
+      <div>
+        <a class="brand" href="#"><span class="mark" aria-hidden="true"></span>Знахарница</a>
+        <p style="color:var(--ink-soft);font-size:15px;margin-top:10px;max-width:34ch">Отглеждаме с грижа, изпращаме с внимание, отговаряме с търпение.</p>
+      </div>
+      <div class="foot-col">
+        <b>Свържете се</b>
+        0888 000 000<br>
+        zdravei@znaharnica.bg<br>
+        понеделник – петък, 9–18 ч.
+      </div>
+      <div class="foot-col">
+        <b>Разгледайте</b>
+        <a href="#kupi">Купи</a><br>
+        <a href="#nauchi">Научи</a><br>
+        <a href="#otzivi">Отзиви</a><br>
+        <a href="#vaprosi">Въпроси</a>
+      </div>
+      <div class="foot-col">
+        <b>Доставка и плащане</b>
+        Еконт и Спиди, 1–2 дни<br>
+        Карта през Stripe / SumUp<br>
+        Гаранция „жива доставка“
+      </div>
+    </div>
+    <p class="smallprint">© 2026 Знахарница. Цените са в евро с равностойност в лева по фиксирания курс 1,95583. Телефонът и адресът по-горе са примерни — заменете ги с реалните данни на фирмата преди публикуване.</p>
+  </div>
+</footer>
+
+<script>
+/* ---- Шевицата: бръмбар от бодове ---- */
+(function(){
+  var map = [
+    "..R.........R..",
+    "..G.........G..",
+    "...G.......G...",
+    "....GGGGGGG....",
+    "....GHGGGHG....",
+    "..GGGGGGGGGGG..",
+    ".GGGGGGGGGGGGG.",
+    "G.GGGGGHGGGGG.G",
+    "..GGGGGHGGGGG..",
+    "G.GGGRGHGRGGG.G",
+    "..GGGGGHGGGGG..",
+    "..GGGGGHGGGGG..",
+    "G.GGGRGHGRGGG.G",
+    "..GGGGGHGGGGG..",
+    "...GGGGHGGGG...",
+    "....GGGHGGG....",
+    "......GGG......"
+  ];
+  var grid = document.getElementById("stitchGrid");
+  if(!grid) return;
+  grid.style.gridTemplateColumns = "repeat(" + map[0].length + ", var(--cell,16px))";
+  var cells = [];
+  map.forEach(function(row){
+    row.split("").forEach(function(ch){
+      var i = document.createElement("i");
+      if(ch === "G") i.className = "g";
+      else if(ch === "H") i.className = "h";
+      else if(ch === "R") i.className = "r";
+      else i.style.visibility = "hidden";
+      grid.appendChild(i);
+      if(ch !== ".") cells.push(i);
+    });
+  });
+  /* бодовете се "шият" в разбъркан ред */
+  cells.sort(function(){ return Math.random() - .5; })
+       .forEach(function(c, idx){ c.style.setProperty("--d", (idx * 18) + "ms"); });
+  requestAnimationFrame(function(){ grid.classList.add("sewn"); });
+})();
+
+/* ---- Стълбицата на схемата ---- */
+(function(){
+  var wrap = document.getElementById("ladderBars");
+  if(!wrap) return;
+  var steps = 16;
+  for(var d = 1; d <= steps * 2 - 1; d++){
+    var v = d <= steps ? d : steps * 2 - d;
+    var bar = document.createElement("i");
+    bar.style.height = (v / steps * 100) + "%";
+    if(v === steps) bar.className = "peak";
+    wrap.appendChild(bar);
+  }
+})();
+
+/* ---- Поръчка → заявка в таблото (демо) ---- */
+(function(){
+  var form = document.getElementById("orderForm");
+  if(!form) return;
+  var num = 1042;
+  document.querySelectorAll(".pack [data-pack]").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      document.getElementById("fPack").value = btn.getAttribute("data-pack");
+      document.getElementById("fName").focus();
+      form.scrollIntoView({behavior:"smooth", block:"center"});
+    });
+  });
+  form.addEventListener("submit", function(e){
+    e.preventDefault();
+    var name = document.getElementById("fName").value.trim();
+    var phone = document.getElementById("fPhone").value.trim();
+    var city = document.getElementById("fCity").value.trim();
+    if(!name || !phone || !city){ form.reportValidity(); return; }
+    var pack = document.getElementById("fPack").value.split("|");
+    var eur = parseFloat(pack[1]);
+    var bgn = (eur * 1.95583).toFixed(2).replace(".", ",");
+    document.getElementById("tNum").textContent = "Заявка №" + (num++);
+    document.getElementById("tPack").textContent = pack[0];
+    document.getElementById("tClient").textContent = name + " · " + phone;
+    document.getElementById("tCourier").textContent = document.getElementById("fCourier").value + ", " + city;
+    document.getElementById("tSum").textContent = "€" + pack[1].replace(".", ",") + " (" + bgn + " лв.) — платена с карта";
+    document.getElementById("ticket").classList.add("show");
+  });
+})();
+
+/* ---- Светла / тъмна тема ---- */
+(function(){
+  var btn = document.getElementById("themeToggle");
+  var root = document.documentElement;
+  function current(){
+    if(root.dataset.theme) return root.dataset.theme;
+    return matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  }
+  function paint(){ btn.textContent = current() === "dark" ? "☀" : "☾"; }
+  btn.addEventListener("click", function(){
+    root.dataset.theme = current() === "dark" ? "light" : "dark";
+    try{ localStorage.setItem("znaharnica-theme", root.dataset.theme); }catch(e){}
+    paint();
+  });
+  try{
+    var saved = localStorage.getItem("znaharnica-theme");
+    if(saved) root.dataset.theme = saved;
+  }catch(e){}
+  paint();
+})();
+
+/* ---- Меко появяване при скрол ---- */
+(function(){
+  var els = document.querySelectorAll(".reveal");
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches){
+    els.forEach(function(el){ el.classList.add("in"); });
+    return;
+  }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting){ en.target.classList.add("in"); io.unobserve(en.target); }
+    });
+  }, {threshold:.12});
+  els.forEach(function(el){ io.observe(el); });
+})();
+</script>
+</body>
+</html>
